@@ -45,11 +45,15 @@ CREATE TABLE `material` (
 --
 
 INSERT INTO `material` (`id`, `level`, `part_code`, `deskripsi`, `lot_size`, `UOM`, `stok`, `status`, `created_at`, `updated_at`) VALUES
-(1, '0', 'A01', 'Espresso Machine', '1', 'Pcs', 1, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(2, '1', 'B01', 'Portafilter', '1', 'Pcs', 1, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(3, '2', 'C04', 'Bolt L M12 x 1.25 x 25', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(4, '2', 'C05', 'Nut M10', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(5, '3', 'D03', 'Bolt L M5 x 1.25 x 16', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48');
+(1, '0', 'H01', 'Final - Assembly SMART Fire Cart', '1', 'Pcs', 0, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(2, '1', 'G01', 'Pemecah Kaca', '1', 'Pcs', 0, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(3, '1', 'G02', 'Adjust Ketinggian', '2', 'Pcs', 0, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(4, '1', 'G03', 'Pegangan Anti Slip', '1', 'Pcs', 0, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(5, '1', 'G04', 'Rangka Utama', '1', 'Pcs', 0, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(6, '1', 'G05', 'Sub - Assembly 1', '1', 'Pcs', 0, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(7, '2', 'I01', 'Alarm Pendeteksi', '1', 'Pcs', 0, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(8, '2', 'I02', 'Koda 360 Derajat', '4', 'Pcs', 0, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(9, '2', 'I03', 'Box Penyimpanan', '1', 'Pcs', 0, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48');
 
 --
 -- Indexes for dumped tables
@@ -69,7 +73,7 @@ ALTER TABLE `material`
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
