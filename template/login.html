@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <style>
+    body {
+      background-color: #EEEBE3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+    }
+    .container {
+      background-color: #EAC295;
+      width: 50%;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      color: #543D2E;
+      font-weight: 700;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .login-btn {
+      background-color: #543D2E;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 85%;
+      font-size: 16px;
+    }
+    .login-btn:hover {
+      background-color: #525B59;
+    }
+    .forgot-password {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #543D2E;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>CV ACY INTEGRATED INFORMATION SYSTEM BY FRI-036</h1>
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+      <input type="text" name="username" placeholder="Enter Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+    <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+  </div>
+</body>
+
+</html>
