@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `apsi`
+-- Database: `fri108_cvman`
 --
 
 -- --------------------------------------------------------
@@ -34,7 +34,7 @@ CREATE TABLE `material` (
   `deskripsi` varchar(255) NOT NULL,
   `lot_size` varchar(255) NOT NULL,
   `UOM` varchar(255) NOT NULL,
-  `stok` bigint(255) NOT NULL,
+  `stok` bigint(255) NOT NULL DEFAULT 0,
   `status` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -45,11 +45,11 @@ CREATE TABLE `material` (
 --
 
 INSERT INTO `material` (`id`, `level`, `part_code`, `deskripsi`, `lot_size`, `UOM`, `stok`, `status`, `created_at`, `updated_at`) VALUES
-(1, '0', 'A01', 'Espresso Machine', '1', 'Pcs', `1`, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(2, '1', 'B01', 'Portafilter', '1', 'Pcs', `1`, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(3, '2', 'C04', 'Bolt L M12 x 1.25 x 25', '2', 'Pcs', `1`, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(4, '2', 'C05', 'Nut M10', '2', 'Pcs', `1`, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
-(5, '3', 'D03', 'Bolt L M5 x 1.25 x 16', '2', 'Pcs', `1`, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48');
+(1, '0', 'A01', 'Espresso Machine', '1', 'Pcs', 1, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(2, '1', 'B01', 'Portafilter', '1', 'Pcs', 1, 'Make', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(3, '2', 'C04', 'Bolt L M12 x 1.25 x 25', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(4, '2', 'C05', 'Nut M10', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48'),
+(5, '3', 'D03', 'Bolt L M5 x 1.25 x 16', '2', 'Pcs', 1, 'Buy', '2024-05-21 22:51:48', '2024-05-21 22:51:48');
 
 --
 -- Indexes for dumped tables
