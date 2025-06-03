@@ -136,10 +136,10 @@ def production_mps():
         connection.close()
     
     return render_template('production/mps/index.html', 
-                         mps_data=mps_data,
-                         planned_orders_count=planned_orders_count,
-                         in_progress_count=in_progress_count,
-                         completed_count=completed_count)
+                            mps_data=mps_data,
+                            planned_orders_count=planned_orders_count,
+                            in_progress_count=in_progress_count,
+                            completed_count=completed_count)
 
 @app.route("/production/mps/add", methods=['GET', 'POST'])
 def production_add_mps():
@@ -229,24 +229,37 @@ def production_material():
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
+            # Get all materials
             cursor.execute("SELECT * FROM material ORDER BY material_code")
             materials = cursor.fetchall()
             
-            # Calculate statistics
+            # Calculate main statistics
             total_materials = len(materials)
             available_count = len([m for m in materials if m[6] == 'available'])
             in_delivery_count = len([m for m in materials if m[6] == 'in deliveries'])
             rejected_count = len([m for m in materials if m[6] == 'rejected'])
             
+            # Get safety stock materials
+            safety_stock_materials = [m for m in materials if m[6] == 'available']
+            
+            # Get materials in deliveries
+            in_delivery_materials = [m for m in materials if m[6] == 'in deliveries']
+            
+            # Get rejected materials
+            rejected_materials = [m for m in materials if m[6] == 'rejected']
+            
     finally:
         connection.close()
     
     return render_template('production/material_availibility/index.html', 
-                         materials=materials,
-                         total_materials=total_materials,
-                         available_count=available_count,
-                         in_delivery_count=in_delivery_count,
-                         rejected_count=rejected_count)
+                            materials=materials,
+                            total_materials=total_materials,
+                            available_count=available_count,
+                            in_delivery_count=in_delivery_count,
+                            rejected_count=rejected_count,
+                            safety_stock_materials=safety_stock_materials,
+                            in_delivery_materials=in_delivery_materials,
+                            rejected_materials=rejected_materials)
 
 @app.route("/production/material/add", methods=['GET', 'POST'])
 def production_add_material():
