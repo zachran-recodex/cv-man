@@ -6,7 +6,7 @@
 <div class="container-fluid p-4">
   <!-- Statistics Cards -->
   <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div class="card bg-primary text-white">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div class="card bg-warning text-white">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div class="card bg-success text-white">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -45,19 +45,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-info text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Low Stock Items</h6>
-              <h4>{{ low_stock_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-exclamation-triangle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Card Low Stock Items DIHAPUS -->
   </div>
 
   <!-- MPS Table -->
@@ -70,11 +58,8 @@
         <a href="{{ url_for('production_add_mps') }}" class="btn btn-primary">
           <i class="fas fa-plus me-2"></i>Add MPS
         </a>
-        <a href="{{ url_for('production_materials') }}" class="btn btn-success">
+        <a href="{{ url_for('production_material') }}" class="btn btn-success">
           <i class="fas fa-boxes me-2"></i>View Materials
-        </a>
-        <a href="{{ url_for('download_production_report') }}" class="btn btn-warning">
-          <i class="fas fa-download me-2"></i>Generate Report
         </a>
       </div>
       

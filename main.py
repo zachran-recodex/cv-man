@@ -132,9 +132,6 @@ def production_mps():
             cursor.execute("SELECT COUNT(*) FROM mps WHERE status = 'Completed'")
             completed_count = cursor.fetchone()[0]
             
-            cursor.execute("SELECT COUNT(*) FROM material WHERE stok < 5")
-            low_stock_count = cursor.fetchone()[0]
-            
     finally:
         connection.close()
     
@@ -142,8 +139,7 @@ def production_mps():
                          mps_data=mps_data,
                          planned_orders_count=planned_orders_count,
                          in_progress_count=in_progress_count,
-                         completed_count=completed_count,
-                         low_stock_count=low_stock_count)
+                         completed_count=completed_count)
 
 @app.route("/production/mps/add", methods=['GET', 'POST'])
 def production_add_mps():
