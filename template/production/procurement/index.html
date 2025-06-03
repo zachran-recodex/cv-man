@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block title %}Procurement{% endblock %}
+{% block page_title %}Procurement Requests{% endblock %}
+{% block content %}
+
+<div class="container-fluid p-4">
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Total Requests</h6>
+              <h4>{{ total_requests or 0 }}</h4>
+            </div>
+            <i class="fas fa-file-contract fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-danger text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Urgent Requests</h6>
+              <h4>{{ urgent_requests or 0 }}</h4>
+            </div>
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Completed</h6>
+              <h4>{{ (total_requests - urgent_requests) or 0 }}</h4>
+            </div>
+            <i class="fas fa-check-circle fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Procurement Table -->
+  <div class="card shadow border-0 rounded-3">
+    <div class="card-header bg-primary text-white py-3">
+      <h2 class="mb-0 fw-bold text-center">Procurement Requests</h2>
+    </div>
+    <div class="card-body p-4 bg-light text-dark">
+      <div class="d-flex gap-2 mb-4">
+        <a href="{{ url_for('production_add_procurement') }}" class="btn btn-primary">
+          <i class="fas fa-plus me-2"></i>Add Request
+        </a>
+        <a href="{{ url_for('production_material') }}" class="btn btn-success">
+          <i class="fas fa-boxes me-2"></i>View Materials
+        </a>
+        <a href="{{ url_for('download_production_report') }}" class="btn btn-warning">
+          <i class="fas fa-download me-2"></i>Generate Report
+        </a>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col" class="text-center">ID</th>
+              <th scope="col">Request Goods</th>
+              <th scope="col" class="text-center">Date Request</th>
+              <th scope="col" class="text-center">Date Needed</th>
+              <th scope="col" class="text-center">Quantity</th>
+              <th scope="col" class="text-center">Priority</th>
+              <th scope="col" class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for procurement in procurements %}
+            <tr>
+              <td class="text-center fw-bold">{{ procurement[0] }}</td>
+              <td>{{ procurement[1] }}</td>
+              <td class="text-center">{{ procurement[2] }}</td>
+              <td class="text-center">{{ procurement[3] }}</td>
+              <td class="text-center">
+                <span class="badge bg-info fs-6">{{ procurement[4] }}</span>
+              </td>
+              <td class="text-center">
+                {% set today = moment().format('YYYY-MM-DD') %}
+                {% if procurement[3]|string <= today %}
+                  <span class="badge bg-danger">Urgent</span>
+                {% else %}
+                  <span class="badge bg-success">Normal</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+                  <a href="{{ url_for('production_edit_procurement', id=procurement[0]) }}" class="btn btn-warning btn-sm">Edit</a>
+                  <a href="{{ url_for('production_delete_procurement', id=procurement[0]) }}" 
+                     class="btn btn-danger btn-sm"
+                     onclick="return confirm('Are you sure you want to delete this procurement request?')">Delete</a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

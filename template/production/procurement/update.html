@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}Edit Procurement Request{% endblock %}
+{% block page_title %}Edit Procurement Request{% endblock %}
+{% block content %}
+
+<div class="container-fluid p-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow border-0 rounded-3">
+        <div class="card-header bg-warning text-white text-center py-3">
+          <h2 class="mb-0 fw-bold">Edit Procurement Request</h2>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <form action="{{ url_for('production_edit_procurement', id=procurement[0]) }}" method="POST">
+            <div class="mb-3">
+              <label class="form-label fw-bold text-dark">Request Goods</label>
+              <input type="text" name="request_goods" class="form-control form-control-lg" value="{{ procurement[1] }}" required>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Date Request</label>
+                <input type="date" name="date_request" class="form-control form-control-lg" value="{{ procurement[2] }}" required>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Date Needed</label>
+                <input type="date" name="date_needed" class="form-control form-control-lg" value="{{ procurement[3] }}" required>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark">Quantity</label>
+              <input type="number" name="quantity" class="form-control form-control-lg" value="{{ procurement[4] }}" min="1" required>
+            </div>
+            
+            <div class="d-flex gap-3 justify-content-center">
+              <button type="submit" class="btn btn-warning btn-lg px-5 py-2 fw-bold">Update Request</button>
+              <a href="{{ url_for('production_procurement') }}" class="btn btn-secondary btn-lg px-5 py-2">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
