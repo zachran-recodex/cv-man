@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Add MPS{% endblock %}
+{% block page_title %}Add Master Production Schedule{% endblock %}
+{% block content %}
+
+<div class="container-fluid p-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center py-3">
+          <h2 class="mb-0 fw-bold">Add Master Production Schedule</h2>
+        </div>
+        <div class="card-body p-4 bg-light">
+          <form action="{{ url_for('production_add_mps') }}" method="POST">
+            <div class="mb-3">
+              <label class="form-label fw-bold text-dark">Product Name</label>
+              <input type="text" name="product" class="form-control form-control-lg" placeholder="Enter Product Name" required>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Product Quantity</label>
+                <input type="number" name="product_quantity" class="form-control form-control-lg" placeholder="Enter Quantity" min="1" required>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Schedule Date</label>
+                <input type="date" name="schedule" class="form-control form-control-lg" required>
+              </div>
+            </div>
+            
+            <div class="d-flex gap-3 justify-content-center">
+              <button type="submit" class="btn btn-primary btn-lg px-5 py-2 fw-bold">Save MPS</button>
+              <a href="{{ url_for('production_home') }}" class="btn btn-secondary btn-lg px-5 py-2">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
