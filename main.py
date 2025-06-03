@@ -30,8 +30,10 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    if 'username' in session:
+    if 'username' in session and 'role' in session:
         return redirect(url_for('home'))
+    elif 'username' in session:
+        return redirect(url_for('role_selection'))
     return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -44,11 +46,34 @@ def login():
         if username and password:  # Add your authentication logic here
             session['username'] = username
             session['password'] = password
-            return redirect(url_for('home'))
+            return redirect(url_for('role_selection'))
         else:
             return render_template('login.html', error='Invalid credentials')
     
     return render_template('login.html')
+
+@app.route('/role')
+def role_selection():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    # If role already selected, go to home
+    if 'role' in session:
+        return redirect(url_for('home'))
+    
+    return render_template('role.html')
+
+@app.route('/select_role', methods=['POST'])
+def select_role():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    role = request.form.get('role')
+    if role:
+        session['role'] = role
+        return redirect(url_for('home'))
+    
+    return redirect(url_for('role_selection'))
 
 @app.route('/logout')
 def logout():
@@ -59,6 +84,9 @@ def logout():
 def home():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     connection = get_db_connection()
     try:
@@ -73,12 +101,19 @@ def home():
 def about():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
+    
     return render_template('about.html')
 
 @app.route("/stok")
 def stok():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     connection = get_db_connection()
     try:
@@ -93,6 +128,9 @@ def stok():
 def add_material():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     if request.method == 'POST':
         level = request.form['level']
@@ -125,6 +163,9 @@ def add_material():
 def edit_material(id):
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     connection = get_db_connection()
     
@@ -165,6 +206,9 @@ def delete_material(id):
     if 'username' not in session:
         return redirect(url_for('login'))
     
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
+    
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
@@ -178,6 +222,9 @@ def delete_material(id):
 def edit_stok(id):
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     connection = get_db_connection()
     
@@ -208,6 +255,9 @@ def edit_stok(id):
 def download_report():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if 'role' not in session:
+        return redirect(url_for('role_selection'))
     
     pdf_path = os.path.join(DOWNLOAD_FOLDER, f"material_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
     generate_report_pdf(pdf_path)
