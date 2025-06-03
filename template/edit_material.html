@@ -1,84 +1,89 @@
 {% extends "layout.html" %}
-{% block title %}Home Page{% endblock %}
+{% block title %}Edit Material{% endblock %}
 {% block content %}
 
-<!-- ini content pagenya  -->
- <div id="content">  
-       <div class="container-fluid">
-      <center>
-         <h1 class="mb-3 mt-3">Edit Material</h1>
-      </center>
-
-   <form action="{{ url_for('edit_material', id=material[0]) }}" method="POST">
-
-       <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Level</label>
-          <div>
-             <select class="form-select" aria-label="Default select example" name="level">
-                <option selected>{{ material[1] }}</option>
-                <option value="1">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="3">4</option>
-                <option value="3">5</option>
-                <option value="3">6</option>
-                <option value="3">7</option>
-                <option value="3">8</option>
-                <option value="3">9</option>
-                <option value="3">10</option>
-               </select>
+<div class="container-fluid p-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow border-0 rounded-3">
+        <div class="card-header bg-warning text-white text-center py-3">
+          <h2 class="mb-0 fw-bold">Edit Material</h2>
+        </div>
+        <div class="card-body p-4">
+          <form action="{{ url_for('edit_material', id=material[0]) }}" method="POST">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Level</label>
+                <select class="form-select form-select-lg" name="level" required>
+                  <option value="{{ material[1] }}" selected>{{ material[1] }}</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Part Code</label>
+                <input type="text" name="part_code" class="form-control form-control-lg" value="{{ material[2] }}" required>
+              </div>
             </div>
-            </div>
+            
             <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Part Code</label>
-          <input type="Text"  name ="part_code" class="form-control" id="exampleFormControlInput1" value="{{ material[2] }}">
-         </div>
-            <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Description</label>
-          <input type="Text"  name ="deskripsi" class="form-control" id="exampleFormControlInput1" value="{{ material[3] }}">
-         </div>
-         <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Lot Size</label>
-          <div>
-             <select class="form-select" aria-label="Default select example" name="lot_size">
-                <option selected>{{ material[4] }}</option>
-               <option value="1">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="3">4</option>
-                <option value="3">5</option>
-                <option value="3">6</option>
-                <option value="3">7</option>
-                <option value="3">8</option>
-                <option value="3">9</option>
-                <option value="3">10</option>
-               </select>
+              <label class="form-label fw-bold text-dark">Description</label>
+              <input type="text" name="deskripsi" class="form-control form-control-lg" value="{{ material[3] }}" required>
             </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">Lot Size</label>
+                <select class="form-select form-select-lg" name="lot_size" required>
+                  <option value="{{ material[4] }}" selected>{{ material[4] }}</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold text-dark">UOM</label>
+                <input type="text" name="UOM" class="form-control form-control-lg" value="{{ material[5] }}" required>
+              </div>
             </div>
-             <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">UOM</label>
-          <input type="text"  name ="UOM" class="form-control" id="exampleFormControlInput1" value="{{ material[5] }}">
-         </div>
-          <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Status</label>
-          <div>
-             <select class="form-select" name="status">
-                <option selected>{{ material[7] }}</option>
+            
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark">Status</label>
+              <select class="form-select form-select-lg" name="status" required>
+                <option value="{{ material[7] }}" selected>{{ material[7] }}</option>
                 <option value="Make">Make</option>
                 <option value="Buy">Buy</option>
-               </select>
+              </select>
             </div>
+            
+            <div class="d-flex gap-3 justify-content-center">
+              <button type="submit" class="btn btn-success btn-lg px-5 py-2 fw-bold">Update Material</button>
+              <a href="{{ url_for('home') }}" class="btn btn-secondary btn-lg px-5 py-2">Cancel</a>
             </div>
-            <center>
-               <button type="submit" class="btn btn-success mb-3 mt-3">Save</button>
-            </center>
-      </form>
-      <center>
-         <a class="mt-3 text-lg-center" href="{{ url_for('home') }}">Back</a>
-      </center>
-   </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

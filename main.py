@@ -31,7 +31,7 @@ def get_db_connection():
 @app.route('/')
 def index():
     if 'username' in session:
-        return f"Halo, {session['username']}! <a href='/logout'>Logout</a>"
+        return redirect(url_for('home'))
     return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -39,22 +39,31 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        session['username'] = username
-        session['password'] = password
-        return redirect(url_for('home'))
+        
+        # Simple authentication (in production, use proper authentication)
+        if username and password:  # Add your authentication logic here
+            session['username'] = username
+            session['password'] = password
+            return redirect(url_for('home'))
+        else:
+            return render_template('login.html', error='Invalid credentials')
+    
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route("/home")
 def home():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM material")
+            cursor.execute("SELECT * FROM material ORDER BY level, part_code")
             data = cursor.fetchall()
     finally:
         connection.close()
@@ -62,14 +71,19 @@ def home():
 
 @app.route("/about")
 def about():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return render_template('about.html')
 
 @app.route("/stok")
 def stok():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM material")
+            cursor.execute("SELECT * FROM material ORDER BY level, part_code")
             data = cursor.fetchall()
     finally:
         connection.close()
@@ -77,6 +91,9 @@ def stok():
 
 @app.route('/addMaterial', methods=['GET', 'POST'])
 def add_material():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         level = request.form['level']
         part_code = request.form['part_code']
@@ -88,18 +105,27 @@ def add_material():
         connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
+                # Check if part_code already exists
+                cursor.execute("SELECT id FROM material WHERE part_code = %s", (part_code,))
+                if cursor.fetchone():
+                    return render_template('addMaterial.html', error='Part code already exists')
+                
                 cursor.execute(
-                    "INSERT INTO material (level, part_code, deskripsi, lot_size, UOM, stok, status) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (level, part_code, deskripsi, lot_size, UOM, 0, status)
+                    "INSERT INTO material (level, part_code, deskripsi, lot_size, UOM, stok, status, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (level, part_code, deskripsi, lot_size, UOM, 0, status, datetime.now(), datetime.now())
                 )
                 connection.commit()
         finally:
             connection.close()
         return redirect(url_for('home'))
+    
     return render_template('addMaterial.html')
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit_material(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     connection = get_db_connection()
     
     if request.method == 'POST':
@@ -113,8 +139,8 @@ def edit_material(id):
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "UPDATE material SET level=%s, part_code=%s, deskripsi=%s, lot_size=%s, UOM=%s, status=%s WHERE id=%s",
-                    (new_level, new_part_code, new_deskripsi, new_lot_size, new_UOM, new_status, id)
+                    "UPDATE material SET level=%s, part_code=%s, deskripsi=%s, lot_size=%s, UOM=%s, status=%s, updated_at=%s WHERE id=%s",
+                    (new_level, new_part_code, new_deskripsi, new_lot_size, new_UOM, new_status, datetime.now(), id)
                 )
                 connection.commit()
         finally:
@@ -129,10 +155,16 @@ def edit_material(id):
     finally:
         connection.close()
     
+    if not material:
+        return redirect(url_for('home'))
+    
     return render_template('edit_material.html', material=material)
 
 @app.route('/delete/<int:id>')
 def delete_material(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
@@ -144,13 +176,16 @@ def delete_material(id):
 
 @app.route('/editstk/<int:id>', methods=['GET', 'POST'])
 def edit_stok(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     connection = get_db_connection()
     
     if request.method == 'POST':
         new_stok = request.form['stok']
         try:
             with connection.cursor() as cursor:
-                cursor.execute("UPDATE material SET stok=%s WHERE id=%s", (new_stok, id))
+                cursor.execute("UPDATE material SET stok=%s, updated_at=%s WHERE id=%s", (new_stok, datetime.now(), id))
                 connection.commit()
         finally:
             connection.close()
@@ -164,19 +199,25 @@ def edit_stok(id):
     finally:
         connection.close()
     
+    if not material:
+        return redirect(url_for('stok'))
+    
     return render_template('edit_stok.html', material=material)
 
 @app.route('/download-report')
 def download_report():
-    pdf_path = os.path.join(DOWNLOAD_FOLDER, "report.pdf")
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    pdf_path = os.path.join(DOWNLOAD_FOLDER, f"material_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
     generate_report_pdf(pdf_path)
-    return send_file(pdf_path, as_attachment=True)
+    return send_file(pdf_path, as_attachment=True, download_name="material_report.pdf")
 
 def generate_report_pdf(file_path):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM material")
+            cursor.execute("SELECT * FROM material ORDER BY level, part_code")
             data = cursor.fetchall()
     finally:
         connection.close()
@@ -185,20 +226,30 @@ def generate_report_pdf(file_path):
     doc = SimpleDocTemplate(file_path, pagesize=letter)
     elements = []
     styles = getSampleStyleSheet()
-    title_style = styles['h1']
-    title_style.alignment = 1
-    title = Paragraph("Laporan Data Material", title_style)
+    
+    # Title
+    title_style = styles['Heading1']
+    title_style.alignment = 1  # Center alignment
+    title = Paragraph("Bill Of Material Report", title_style)
     elements.append(title)
     
+    # Date
     tanggal = datetime.now().strftime("%d %B %Y, %H:%M:%S")
-    info = Paragraph(f"Tanggal Pembuatan: {tanggal}", styles['Normal'])
-    info.spaceAfter = 10
+    info = Paragraph(f"<br/>Generated on: {tanggal}<br/><br/>", styles['Normal'])
     elements.append(info)
 
     # Table content
-    table_data = [["ID", "Level", "Part Code", "Deskripsi", "Lot Size", "UOM", "Stock", "Status"]]
+    table_data = [["Level", "Part Code", "Description", "Lot Size", "UOM", "Stock", "Status"]]
     for row in data:
-        table_data.append([str(x) for x in row])
+        table_data.append([
+            str(row[1]),  # level
+            str(row[2]),  # part_code
+            str(row[3]),  # deskripsi
+            str(row[4]),  # lot_size
+            str(row[5]),  # UOM
+            str(row[6]),  # stok
+            str(row[7])   # status
+        ])
     
     table = Table(table_data)
     table.setStyle(TableStyle([
@@ -206,9 +257,12 @@ def generate_report_pdf(file_path):
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('WORDWRAP', (0, 0), (-1, -1), 1)
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
     ]))
     elements.append(table)
     doc.build(elements)
