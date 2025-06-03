@@ -4,62 +4,6 @@
 {% block content %}
 
 <div class="container-fluid p-4">
-  <!-- Statistics Cards -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card bg-success text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Available</h6>
-              <h4>{{ available_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-check-circle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-warning text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">In Deliveries</h6>
-              <h4>{{ in_delivery_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-truck fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-danger text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Rejected</h6>
-              <h4>{{ rejected_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-times-circle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-info text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Total Materials</h6>
-              <h4>{{ total_materials or 0 }}</h4>
-            </div>
-            <i class="fas fa-boxes fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Materials Table -->
   <div class="card shadow border-0 rounded-3">
     <div class="card-header bg-primary text-white py-3">

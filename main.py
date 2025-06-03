@@ -344,17 +344,30 @@ def production_procurement():
             cursor.execute("SELECT * FROM procurement ORDER BY date_needed ASC")
             procurements = cursor.fetchall()
             
-            # Calculate statistics
+            # Calculate statistics and add urgency flag to each procurement
             total_requests = len(procurements)
-            urgent_requests = len([p for p in procurements if p[3] <= datetime.now().date()])
+            today = datetime.now().date()
+            urgent_requests = 0
+            
+            # Add urgency information to each procurement record
+            enhanced_procurements = []
+            for procurement in procurements:
+                # procurement[3] is date_needed
+                is_urgent = procurement[3] <= today
+                if is_urgent:
+                    urgent_requests += 1
+                
+                # Add the urgency flag to the procurement data
+                enhanced_procurement = list(procurement) + [is_urgent]
+                enhanced_procurements.append(enhanced_procurement)
             
     finally:
         connection.close()
     
     return render_template('production/procurement/index.html', 
-                         procurements=procurements,
-                         total_requests=total_requests,
-                         urgent_requests=urgent_requests)
+                        procurements=enhanced_procurements,
+                        total_requests=total_requests,
+                        urgent_requests=urgent_requests)
 
 @app.route("/production/procurement/add", methods=['GET', 'POST'])
 def production_add_procurement():

@@ -4,62 +4,12 @@
 {% block content %}
 
 <div class="container-fluid p-4">
-  <!-- Statistics Cards -->
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card bg-primary text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Planned Orders</h6>
-              <h4>{{ planned_orders_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-calendar-plus fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-warning text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">In Progress</h6>
-              <h4>{{ in_progress_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-cogs fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-success text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Completed</h6>
-              <h4>{{ completed_count or 0 }}</h4>
-            </div>
-            <i class="fas fa-check-circle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Card Low Stock Items DIHAPUS -->
-  </div>
-
   <!-- MPS Table -->
   <div class="card shadow border-0 rounded-3">
-    <div class="card-header bg-primary text-white py-3">
-      <h2 class="mb-0 fw-bold text-center">Master Production Schedule</h2>
-    </div>
     <div class="card-body p-4 bg-light text-dark">
       <div class="d-flex gap-2 mb-4">
-        <a href="{{ url_for('production_add_mps') }}" class="btn btn-primary">
+        <a href="{{ url_for('production_add_mps') }}" class="btn" style="background-color: #f39c12;">
           <i class="fas fa-plus me-2"></i>Add MPS
-        </a>
-        <a href="{{ url_for('production_material') }}" class="btn btn-success">
-          <i class="fas fa-boxes me-2"></i>View Materials
         </a>
       </div>
       

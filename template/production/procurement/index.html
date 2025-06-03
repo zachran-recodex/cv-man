@@ -4,49 +4,6 @@
 {% block content %}
 
 <div class="container-fluid p-4">
-  <!-- Statistics Cards -->
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card bg-primary text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Total Requests</h6>
-              <h4>{{ total_requests or 0 }}</h4>
-            </div>
-            <i class="fas fa-file-contract fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-danger text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Urgent Requests</h6>
-              <h4>{{ urgent_requests or 0 }}</h4>
-            </div>
-            <i class="fas fa-exclamation-triangle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-success text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div>
-              <h6 class="card-title">Completed</h6>
-              <h4>{{ (total_requests - urgent_requests) or 0 }}</h4>
-            </div>
-            <i class="fas fa-check-circle fa-2x"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Procurement Table -->
   <div class="card shadow border-0 rounded-3">
     <div class="card-header bg-primary text-white py-3">
@@ -86,8 +43,7 @@
                 <span class="badge bg-info fs-6">{{ procurement[4] }}</span>
               </td>
               <td class="text-center">
-                {% set today = moment().format('YYYY-MM-DD') %}
-                {% if procurement[3]|string <= today %}
+                {% if procurement[5] %}
                   <span class="badge bg-danger">Urgent</span>
                 {% else %}
                   <span class="badge bg-success">Normal</span>
@@ -97,8 +53,8 @@
                 <div class="btn-group" role="group">
                   <a href="{{ url_for('production_edit_procurement', id=procurement[0]) }}" class="btn btn-warning btn-sm">Edit</a>
                   <a href="{{ url_for('production_delete_procurement', id=procurement[0]) }}" 
-                     class="btn btn-danger btn-sm"
-                     onclick="return confirm('Are you sure you want to delete this procurement request?')">Delete</a>
+                      class="btn btn-danger btn-sm"
+                      onclick="return confirm('Are you sure you want to delete this procurement request?')">Delete</a>
                 </div>
               </td>
             </tr>
