@@ -122,24 +122,11 @@ def production_mps():
             cursor.execute("SELECT * FROM mps ORDER BY schedule DESC")
             mps_data = cursor.fetchall()
             
-            # Calculate statistics
-            cursor.execute("SELECT COUNT(*) FROM mps WHERE status = 'Planned'")
-            planned_orders_count = cursor.fetchone()[0]
-            
-            cursor.execute("SELECT COUNT(*) FROM mps WHERE status = 'In Progress'")
-            in_progress_count = cursor.fetchone()[0]
-            
-            cursor.execute("SELECT COUNT(*) FROM mps WHERE status = 'Completed'")
-            completed_count = cursor.fetchone()[0]
-            
     finally:
         connection.close()
     
     return render_template('production/mps/index.html', 
-                            mps_data=mps_data,
-                            planned_orders_count=planned_orders_count,
-                            in_progress_count=in_progress_count,
-                            completed_count=completed_count)
+                            mps_data=mps_data)
 
 @app.route("/production/mps/add", methods=['GET', 'POST'])
 def production_add_mps():
@@ -229,24 +216,15 @@ def production_material():
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            # Get all materials
+            # Get all materials with new structure
             cursor.execute("SELECT * FROM material ORDER BY material_code")
             materials = cursor.fetchall()
             
-            # Calculate main statistics
+            # Calculate statistics
             total_materials = len(materials)
-            available_count = len([m for m in materials if m[6] == 'available'])
-            in_delivery_count = len([m for m in materials if m[6] == 'in deliveries'])
-            rejected_count = len([m for m in materials if m[6] == 'rejected'])
-            
-            # Get safety stock materials
-            safety_stock_materials = [m for m in materials if m[6] == 'available']
-            
-            # Get materials in deliveries
-            in_delivery_materials = [m for m in materials if m[6] == 'in deliveries']
-            
-            # Get rejected materials
-            rejected_materials = [m for m in materials if m[6] == 'rejected']
+            available_count = len([m for m in materials if m[5] > 0])  # safety_stock_qty > 0
+            in_delivery_count = len([m for m in materials if m[6] > 0])  # delivery_stock_qty > 0
+            rejected_count = len([m for m in materials if m[7] > 0])  # rejected_stock_qty > 0
             
     finally:
         connection.close()
@@ -256,9 +234,60 @@ def production_material():
                             total_materials=total_materials,
                             available_count=available_count,
                             in_delivery_count=in_delivery_count,
-                            rejected_count=rejected_count,
-                            safety_stock_materials=safety_stock_materials,
-                            in_delivery_materials=in_delivery_materials,
+                            rejected_count=rejected_count)
+
+@app.route("/production/material/available")
+def production_material_available():
+    if not check_role_access('Production Staff'):
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Get only materials with safety stock > 0
+            cursor.execute("SELECT * FROM material WHERE safety_stock_qty > 0 ORDER BY material_code")
+            available_materials = cursor.fetchall()
+            
+    finally:
+        connection.close()
+    
+    return render_template('production/material_availibility/available.html', 
+                            available_materials=available_materials)
+
+@app.route("/production/material/delivery")
+def production_material_delivery():
+    if not check_role_access('Production Staff'):
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Get only materials with delivery stock > 0
+            cursor.execute("SELECT * FROM material WHERE delivery_stock_qty > 0 ORDER BY material_code")
+            delivery_materials = cursor.fetchall()
+            
+    finally:
+        connection.close()
+    
+    return render_template('production/material_availibility/delivery.html', 
+                            delivery_materials=delivery_materials)
+
+@app.route("/production/material/reject")
+def production_material_reject():
+    if not check_role_access('Production Staff'):
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Get only materials with rejected stock > 0
+            cursor.execute("SELECT * FROM material WHERE rejected_stock_qty > 0 ORDER BY material_code")
+            rejected_materials = cursor.fetchall()
+            
+    finally:
+        connection.close()
+    
+    return render_template('production/material_availibility/reject.html', 
                             rejected_materials=rejected_materials)
 
 @app.route("/production/material/add", methods=['GET', 'POST'])
@@ -270,16 +299,17 @@ def production_add_material():
         material = request.form['material']
         material_code = request.form['material_code']
         description = request.form['description']
-        lot_size = request.form['lot_size']
         uom = request.form['uom']
-        status = request.form['status']
+        safety_stock_qty = request.form['safety_stock_qty']
+        delivery_stock_qty = request.form['delivery_stock_qty']
+        rejected_stock_qty = request.form['rejected_stock_qty']
         
         connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO material (material, material_code, description, lot_size, uom, status, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (material, material_code, description, lot_size, uom, status, datetime.now())
+                    "INSERT INTO material (material, material_code, description, uom, safety_stock_qty, delivery_stock_qty, rejected_stock_qty, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (material, material_code, description, uom, safety_stock_qty, delivery_stock_qty, rejected_stock_qty, datetime.now())
                 )
                 connection.commit()
         finally:
@@ -300,15 +330,16 @@ def production_edit_material(id):
         material = request.form['material']
         material_code = request.form['material_code']
         description = request.form['description']
-        lot_size = request.form['lot_size']
         uom = request.form['uom']
-        status = request.form['status']
+        safety_stock_qty = request.form['safety_stock_qty']
+        delivery_stock_qty = request.form['delivery_stock_qty']
+        rejected_stock_qty = request.form['rejected_stock_qty']
         
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "UPDATE material SET material=%s, material_code=%s, description=%s, lot_size=%s, uom=%s, status=%s, updated_at=%s WHERE id=%s",
-                    (material, material_code, description, lot_size, uom, status, datetime.now(), id)
+                    "UPDATE material SET material=%s, material_code=%s, description=%s, uom=%s, safety_stock_qty=%s, delivery_stock_qty=%s, rejected_stock_qty=%s, updated_at=%s WHERE id=%s",
+                    (material, material_code, description, uom, safety_stock_qty, delivery_stock_qty, rejected_stock_qty, datetime.now(), id)
                 )
                 connection.commit()
         finally:

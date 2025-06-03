@@ -21,13 +21,12 @@ CREATE TABLE `mps` (
   `product` varchar(255) NOT NULL,
   `product_quantity` int(11) NOT NULL,
   `schedule` date NOT NULL,
-  `status` enum('Planned','In Progress','Completed','Cancelled') NOT NULL DEFAULT 'Planned',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- Table structure for table `material`
+-- Updated Table structure for table `material`
 -- =====================================================
 
 CREATE TABLE `material` (
@@ -35,9 +34,10 @@ CREATE TABLE `material` (
   `material_code` varchar(100) NOT NULL,
   `material` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `lot_size` int(11) NOT NULL,
   `uom` varchar(50) NOT NULL,
-  `status` enum('available','in deliveries','rejected') NOT NULL DEFAULT 'available',
+  `safety_stock_qty` int(11) NOT NULL DEFAULT 0,
+  `delivery_stock_qty` int(11) NOT NULL DEFAULT 0,
+  `rejected_stock_qty` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -63,7 +63,6 @@ CREATE TABLE `procurement` (
 ALTER TABLE `mps`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_mps_schedule` (`schedule`),
-  ADD KEY `idx_mps_status` (`status`),
   ADD KEY `idx_mps_product` (`product`);
 
 -- =====================================================
@@ -73,9 +72,11 @@ ALTER TABLE `mps`
 ALTER TABLE `material`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_material_code` (`material_code`),
-  ADD KEY `idx_material_status` (`status`),
   ADD KEY `idx_material_name` (`material`),
-  ADD KEY `idx_material_uom` (`uom`);
+  ADD KEY `idx_material_uom` (`uom`),
+  ADD KEY `idx_material_safety_stock` (`safety_stock_qty`),
+  ADD KEY `idx_material_delivery_stock` (`delivery_stock_qty`),
+  ADD KEY `idx_material_rejected_stock` (`rejected_stock_qty`);
 
 -- =====================================================
 -- Indexes for table `procurement`
@@ -109,7 +110,9 @@ ALTER TABLE `mps`
   ADD CONSTRAINT `chk_mps_quantity` CHECK (`product_quantity` > 0);
 
 ALTER TABLE `material` 
-  ADD CONSTRAINT `chk_material_lot_size` CHECK (`lot_size` > 0);
+  ADD CONSTRAINT `chk_material_safety_stock` CHECK (`safety_stock_qty` >= 0),
+  ADD CONSTRAINT `chk_material_delivery_stock` CHECK (`delivery_stock_qty` >= 0),
+  ADD CONSTRAINT `chk_material_rejected_stock` CHECK (`rejected_stock_qty` >= 0);
 
 ALTER TABLE `procurement` 
   ADD CONSTRAINT `chk_procurement_quantity` CHECK (`quantity` > 0),
@@ -117,7 +120,7 @@ ALTER TABLE `procurement`
 
 -- Add table comments
 ALTER TABLE `mps` COMMENT = 'Master Production Schedule - tracks production planning and scheduling';
-ALTER TABLE `material` COMMENT = 'Material Availability - manages material inventory and status';
+ALTER TABLE `material` COMMENT = 'Material Availability - manages material inventory with separate stock tracking for safety, delivery, and rejected quantities';
 ALTER TABLE `procurement` COMMENT = 'Procurement Requests - handles material procurement requests';
 
 COMMIT;
